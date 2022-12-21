@@ -1,1 +1,1 @@
-*** My solutions from STEPIK sql course
+### My solutions from STEPIK sql course
