@@ -113,3 +113,38 @@ CREATE TABLE buy_pay AS
         GROUP BY buy_id
             HAVING buy_book.buy_id = 5;
 SELECT * FROM buy_pay;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+В таблицу buy_step для заказа с номером 5 включить все этапы из таблицы step, которые должен пройти этот заказ. 
+В столбцы date_step_beg и date_step_end всех записей занести Null.
+
+INSERT INTO buy_step (buy_id, step_id)
+    SELECT buy_id, step_id
+        FROM step
+    CROSS JOIN buy
+        WHERE buy.buy_id = 5;
+SELECT * FROM buy_step;
+
+/* Second option*/
+
+INSERT INTO buy_step (buy_id, step_id, date_step_beg, date_step_end)
+    SELECT 5, step_id, null, null
+        FROM step;
+SELECT * FROM buy_step;
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Завершить этап «Оплата» для заказа с номером 5, вставив в столбец date_step_end дату 13.04.2020, 
+и начать следующий этап («Упаковка»), задав в столбце date_step_beg для этого этапа ту же дату.
+
+UPDATE buy_step 
+SET date_step_end = IF(step_id = (SELECT step_id FROM step 
+                                  WHERE name_step = "Оплата"), '2020-04-13', date_step_end), 
+                                  
+  date_step_beg = IF(step_id = (SELECT step_id FROM step 
+                                  WHERE name_step = "Упаковка"), '2020-04-13', date_step_beg)
+WHERE buy_id = 5;
+  
+SELECT * FROM buy_step
+WHERE buy_id = 5;
