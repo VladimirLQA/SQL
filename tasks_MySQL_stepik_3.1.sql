@@ -66,4 +66,33 @@ SELECT question_id, name_question
 
 -------------------------------------------------------------------------------------------------------------------------------------
 
+Вывести вопросы, которые были включены в тест для Семенова Ивана по дисциплине 
+«Основы SQL» 2020-05-17  (значение attempt_id для этой попытки равно 7). 
+Указать, какой ответ дал студент и правильный он или нет(вывести Верно или Неверно). 
+В результат включить вопрос, ответ и вычисляемый столбец  Результат.
+
+SELECT name_question, name_answer, IF(is_correct = 1, 'Верно', 'Неверно') AS Результат
+    FROM testing 
+        JOIN answer USING(answer_id)
+        JOIN question ON testing.question_id = question.question_id
+        JOIN subject USING(subject_id)
+        JOIN attempt USING(attempt_id)
+        JOIN student USING(student_id)
+            WHERE attempt.date_attempt = DATE('2020-05-17') AND
+                  student.name_student = 'Семенов Иван' AND
+                  subject.name_subject = 'Основы SQL';
+
+/*Second option with subqueries*/
+
+SELECT name_question, name_answer, IF(is_correct, 'Верно', 'Неверно') Результат
+    FROM testing 
+        JOIN question USING (question_id)
+        JOIN answer USING (answer_id)
+    WHERE attempt_id = (SELECT attempt_id
+                            FROM attempt
+                                WHERE date_attempt = '2020-05-17' AND
+                                    student_id = (SELECT student_id FROM student WHERE name_student = 'Семенов Иван') AND
+                                    subject_id = (SELECT subject_id FROM subject WHERE name_subject = 'Основы SQL'));
+
+-------------------------------------------------------------------------------------------------------------------------------------
 
