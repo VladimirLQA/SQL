@@ -129,3 +129,19 @@ SELECT name_subject, CONCAT(LEFT(name_question, 30), '...') AS 'Вопрос', C
             JOIN answer  USING(answer_id)
                 GROUP BY name_subject, name_question
                 ORDER BY 1, 4 DESC, 2 
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Вывести 
+- всех студентов (ФИО_Студента), если студент ничего не сдавал - вывести ФИО и в других столбцах поставить "-" 
+- предметы которые они сдавали (Предмет) 
+- дату тестирования (Дата_сдачи) в виде dd.mm.yyyy 
+- результат тестирования (Результат) в таком виде "67 %"
+Сначала отсортировать по имени студента, потом по дате тестирования
+
+SELECT name_student AS ФИО_Студента, IF (name_subject IS NUll, '-', name_subject) AS Предмет, 
+       IF (date_attempt IS NULL, '-', CONCAT (DAY(date_attempt), '.0', MONTH(date_attempt), '.',YEAR(date_attempt))) AS Дата_сдачи, 
+       IF (result IS NULL, '-', CONCAT (result, ' %')) AS Результат
+            FROM subject INNER JOIN attempt USING (subject_id)
+                 RIGHT JOIN student USING (student_id)
+                        ORDER BY name_student, date_attempt;
