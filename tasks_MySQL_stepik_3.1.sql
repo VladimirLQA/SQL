@@ -110,3 +110,22 @@ SELECT name_student, name_subject, date_attempt, ROUND( SUM( is_correct/3*100 ),
         JOIN student USING(student_id)
             GROUP BY name_student, name_subject, date_attempt
                 ORDER BY name_student, date_attempt DESC
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Для каждого вопроса вывести процент успешных решений, то есть отношение количества верных ответов 
+к общему количеству ответов, значение округлить до 2-х знаков после запятой. Также вывести название 
+предмета, к которому относится вопрос, и общее количество ответов на этот вопрос. В результат включить 
+название дисциплины, вопросы по ней (столбец назвать Вопрос), а также два вычисляемых столбца Всего_ответов 
+и Успешность. Информацию отсортировать сначала по названию дисциплины, потом по убыванию успешности, 
+а потом по тексту вопроса в алфавитном порядке.
+Поскольку тексты вопросов могут быть длинными, обрезать их 30 символов и добавить многоточие "...".
+
+SELECT name_subject, CONCAT(LEFT(name_question, 30), '...') AS 'Вопрос', COUNT(answer_id) AS 'Всего_ответов',
+    ROUND(SUM(is_correct) / COUNT(answer_id) * 100, 2) AS 'Успешность'
+        FROM subject
+            JOIN question  USING(subject_id)
+            JOIN testing  USING(question_id)
+            JOIN answer  USING(answer_id)
+                GROUP BY name_subject, name_question
+                ORDER BY 1, 4 DESC, 2 
