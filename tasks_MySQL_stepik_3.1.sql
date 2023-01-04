@@ -145,3 +145,14 @@ SELECT name_student AS ФИО_Студента, IF (name_subject IS NUll, '-', n
             FROM subject INNER JOIN attempt USING (subject_id)
                  RIGHT JOIN student USING (student_id)
                         ORDER BY name_student, date_attempt;
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Каждый студент должен сдать устный экзамен по каждому предмету, 
+при этом дата экзамена назначается рандомно в пределах июня 2020. 
+Сортировать по по имени студентов и по дате по возрастанию 
+
+SELECT name_student, name_subject, DATE_ADD('2020-06-01', INTERVAL FLOOR(RAND()*31) DAY) AS Дата
+    FROM student 
+        CROSS JOIN subject
+            ORDER BY 1, 3;
